@@ -1,0 +1,3 @@
+
+
+[MoveGenerator.findNextSet](1)
