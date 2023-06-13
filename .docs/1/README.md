@@ -297,4 +297,4 @@ fn find_next_set(&mut self) {
 Note: In the Rust code, I assumed the presence of a struct with the necessary fields 
 `(stored_from, stored_to, board, move_set_index, capture_type, moves_v, set, shift, made_capture, moves_h, moves_s, moves_b)` and the `Bits` struct containing the constants `SHIFT_VERTICAL`, `SHIFT_HORIZONTAL`, `SHIFT_SLANT`, `SHIFT_BACKSLANT`, and `DIAGONAL`. You may need to modify the code according to your specific use case.
 
-## [:back:]((../#one-move-generator-find-next)
+## [:back:](../#one-move-generator-find-next)
