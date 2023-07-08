@@ -3,15 +3,15 @@ pub struct Bits {
     captured: u64, // 1L << 63; sign
                    // bit speeds
                    // tests
-    initial_bot: u64,
+    pub initial_bot: u64,
     pub initial_top: u64,
-    top_row: u64,
-    bottom_row: u64,
-    left_col: u64,
-    right_col: u64,
-    diagonal: u64,
+    pub top_row: u64,
+    pub bottom_row: u64,
+    pub left_col: u64,
+    pub right_col: u64,
+    pub diagonal: u64,
     pub on_board: u64,
-    center: u64,
+    pub center: u64,
                                       
     ones: u64,
     twos: u64,

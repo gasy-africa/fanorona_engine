@@ -61,7 +61,7 @@ fn display_string(bin: &str) -> Vec<Vec<char>> {
     board.push(four);
     board.push(five);
 
-    println!("|`~`     | A| B| C| D| E| F| G| H| I|");
+    println!("|  🇲🇬     | A| B| C| D| E| F| G| H| I|");
     println!("|--------|--|--|--|--|--|--|--|--|--|");
     for i in (1..=5).rev() {
         let row = format!("|{:7} {}", display_emoji(i), DisplayRow(board[i].clone()));
