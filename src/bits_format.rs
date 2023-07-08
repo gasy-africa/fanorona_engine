@@ -10,9 +10,9 @@ impl fmt::Display for DisplayRow {
             .enumerate()
             .flat_map(|(_, &element)| {
                 match element {
-                    '1' => vec!['|',':','o',':'],
-                    '0' => vec!['|',':','x',':'],
-                      _ => vec!['|',' ',' ',' '],
+                    '1' => vec!['|','🟤'],
+                    '0' => vec!['|','⚪'],
+                      _ => vec!['|',' '],
                 }
             })
             .collect();
@@ -61,8 +61,8 @@ fn display_string(bin: &str) -> Vec<Vec<char>> {
     board.push(four);
     board.push(five);
 
-    println!("|`~`     |`A`|`B`|`C`|`D`|`E`|`F`|`G`|`H`|`I`|");
-    println!("|--------|---|---|---|---|---|---|---|---|---|");
+    println!("|`~`     | A| B| C| D| E| F| G| H| I|");
+    println!("|--------|--|--|--|--|--|--|--|--|--|");
     for i in (1..=5).rev() {
         let row = format!("|{:7} {}", display_emoji(i), DisplayRow(board[i].clone()));
 
