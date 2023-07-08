@@ -27,16 +27,11 @@ fn fill64(bin: &str) -> String {
 
 fn display_emoji(number: usize) -> &'static str {
     match number {
-        0 => ":zero:",
-        1 => ":one:",
-        2 => ":two:",
-        3 => ":three:",
-        4 => ":four:",
-        5 => ":five:",
-        6 => ":six:",
-        7 => ":seven:",
-        8 => ":eight:",
-        9 => ":nine:",
+        1 => "1️⃣",
+        2 => "2️⃣",
+        3 => "3️⃣",
+        4 => "4️⃣",
+        5 => "5️⃣",
         _ => "",
     }
 }
@@ -61,8 +56,8 @@ fn display_string(bin: &str) -> Vec<Vec<char>> {
     board.push(four);
     board.push(five);
 
-    println!("|  🇲🇬     | A| B| C| D| E| F| G| H| I|");
-    println!("|--------|--|--|--|--|--|--|--|--|--|");
+    println!("|🇲🇬     | A| B| C| D| E| F| G| H| I|");
+    println!("|------|--|--|--|--|--|--|--|--|--|");
     for i in (1..=5).rev() {
         let row = format!("|{:7} {}", display_emoji(i), DisplayRow(board[i].clone()));
 
