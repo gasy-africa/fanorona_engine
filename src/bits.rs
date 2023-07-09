@@ -12,6 +12,11 @@ pub struct Bits {
     pub diagonal: u64,
     pub on_board: u64,
     pub center: u64,
+
+    pub SHIFT_VERTICAL: u32, // 10
+    pub SHIFT_HORIZONTAL: u32, // 1
+    pub SHIFT_SLANT: u32, // 11
+    pub SHIFT_BACKSLANT: u32, // 9
                                       
     ones: u64,
     twos: u64,
@@ -38,6 +43,12 @@ const BITS_STRUCT: Bits = Bits {
     ones:        0b0101010101010101010101010101010101010101010101010101010101010101,
     twos:        0b0011001100110011001100110011001100110011001100110011001100110011,
     fours:       0b00001111000011110000111100001111,
+
+    SHIFT_VERTICAL: 0b1010, // 10
+    SHIFT_HORIZONTAL: 0b1, // 1
+    SHIFT_SLANT: 0b1011, // 11
+    SHIFT_BACKSLANT: 0b1001, // 9
+
 };
 
 impl Bits {
@@ -61,7 +72,7 @@ impl Bits {
         1u64 << (10 * (4 - row) + (8 - col))
     }
     
-    fn last_bit(bitboard: u64) -> u64 {
+    pub fn last_bit(bitboard: u64) -> u64 {
         bitboard & (!bitboard + 1)
     }
         
