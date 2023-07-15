@@ -1,7 +1,7 @@
 mod bits;
 mod bits_format;
 
-use bits::Bits;
+use bits::bits::Bits;
 
 fn main() {
     println!("# Fanorona Engine! \n");

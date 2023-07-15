@@ -2,7 +2,7 @@
 mod bits;
 mod bits_format;
 
-use bits::Bits;
+use bits::bits::Bits;
 
 #[derive(Debug, PartialEq, Default)]
 struct ElementSet {
@@ -42,11 +42,11 @@ fn find_next_set(
 
     let move_set_index: u32 = ingress_move_set_index + 1;
 
-    let bits: Bits = Bits::new();
+    let bits: bits::bits::Bits = Bits::new();
 
     match move_set_index {
         0 => {
-            let shift = bits.SHIFT_VERTICAL;
+            let shift = bits.shift_vertical;
             let capture_type = Capture::FORWARD;
             let capture_type2 = Capture::FORWARD;
             let moves_v = (from & (to >> shift)) | (to & (from >> shift));
