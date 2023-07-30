@@ -506,3 +506,100 @@ In this implementation, we add two parameters to the `find_best_move` function: 
 The `find_best_move` function now performs iterative deepening by repeatedly searching the game tree to increasing depths until either the time limit is reached or the maximum depth is reached. After each search iteration, the best move found so far is updated. Once the time limit or maximum depth is reached, the function returns the best move found.
 
 This approach allows us to make more informed decisions within the given time constraints, exploring deeper levels of the game tree when possible. Keep in mind that the time required for the search depends on the complexity of the game and the hardware's processing power. It's essential to strike a balance between the search depth and the available time to find a good move efficiently.
+
+> add Principal Variation to the alpha-betta pruning algorithm
+
+Adding Principal Variation (PV) to the Alpha-Beta Pruning algorithm involves keeping track of the best moves explored during the search to improve the search efficiency further. PV is the sequence of moves that the algorithm considers the most promising during the search. By reordering the moves based on PV information, we can improve the chances of finding cutoffs and speed up the search process.
+
+Here's the updated `FanoronaBoard` struct with the `alpha_beta_pv` function, which includes PV information:
+
+```rust
+// ... (previously defined code for FanoronaBoard and constants) ...
+
+impl FanoronaBoard {
+    // ... (previously defined code for other methods, including new, set_cell, get_cell, display, generate_moves, and evaluate) ...
+
+    // Function to implement the Alpha-Beta Pruning algorithm with Principal Variation (PV)
+    fn alpha_beta_pv(
+        &self,
+        depth: i32,
+        alpha: i32,
+        beta: i32,
+        maximizing_player: bool,
+        pv: &mut Vec<FanoronaBoard>,
+    ) -> i32 {
+        if depth == 0 {
+            return self.evaluate();
+        }
+
+        // Check if the current board position is already in the Principal Variation (PV) table
+        for (index, board) in pv.iter().enumerate() {
+            if *self == *board {
+                // Move the matching board to the front of the PV to reorder moves
+                pv.swap(0, index);
+                break;
+            }
+        }
+
+        if maximizing_player {
+            let mut value = std::i32::MIN;
+            let mut new_alpha = alpha;
+            for child_board in self.generate_moves() {
+                value = value.max(
+                    child_board
+                        .alpha_beta_pv(depth - 1, new_alpha, beta, false, pv)
+                        .min(beta),
+                );
+                new_alpha = new_alpha.max(value);
+                if beta <= new_alpha {
+                    break;
+                }
+            }
+            value
+        } else {
+            let mut value = std::i32::MAX;
+            let mut new_beta = beta;
+            for child_board in self.generate_moves() {
+                value = value.min(
+                    child_board
+                        .alpha_beta_pv(depth - 1, alpha, new_beta, true, pv)
+                        .max(alpha),
+                );
+                new_beta = new_beta.min(value);
+                if new_beta <= alpha {
+                    break;
+                }
+            }
+            value
+        }
+    }
+
+    // Function to find the best move using Alpha-Beta Pruning with Principal Variation (PV)
+    fn find_best_move(&self, depth: i32) -> FanoronaBoard {
+        let mut pv: Vec<FanoronaBoard> = Vec::new();
+        let maximizing_player = self.player_turn == WHITE_PIECE;
+        let mut best_score = if maximizing_player {
+            std::i32::MIN
+        } else {
+            std::i32::MAX
+        };
+        let mut best_move = self.clone();
+
+        for child_board in self.generate_moves() {
+            let score = child_board.alpha_beta_pv(depth - 1, std::i32::MIN, std::i32::MAX, !maximizing_player, &mut pv);
+            if (maximizing_player && score > best_score) || (!maximizing_player && score < best_score) {
+                best_score = score;
+                best_move = child_board;
+            }
+        }
+
+        best_move
+    }
+}
+```
+
+In this implementation, we add a `pv` vector to the `alpha_beta_pv` function to store the Principal Variation. During the search, we reorder the moves based on PV information. If a board position is found in the PV, we move it to the front of the PV vector to prioritize exploring the most promising moves first.
+
+The `find_best_move` function now maintains the PV vector and passes it to the `alpha_beta_pv` function for reordering the moves. The search proceeds as usual with Alpha-Beta Pruning, but with the added benefit of PV information to improve the move ordering.
+
+By using Principal Variation, the search efficiency is enhanced, as we prioritize the most promising moves based on previous search results. This can lead to earlier cutoffs, reducing the number of nodes explored and improving the overall search performance.
