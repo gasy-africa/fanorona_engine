@@ -102,3 +102,100 @@ fn main() {
 Please note that this is a basic example to give you an idea of how you can structure the code. In a full implementation, you would need to add more sophisticated logic for move validation, capturing pieces, checking for game-ending conditions, and handling the different types of moves (approach, withdrawal, and capture) allowed in the Fanorona game.
 
 Additionally, the actual rules and mechanics of the Fanorona game can be more complex, so you may need to adjust the code accordingly based on your desired level of detail and gameplay experience.
+
+> use alpha-beta pruning algorithm
+
+Implementing the full Alpha-Beta Pruning algorithm for the Fanorona game in Rust requires a significant amount of code, including handling the game logic, move generation, and recursive search with Alpha-Beta Pruning. Given the space limitations, I'll provide a basic outline of how you can incorporate the Alpha-Beta Pruning algorithm into the Fanorona game in Rust.
+
+First, let's update the `FanoronaBoard` struct to include methods for move generation, evaluating board positions, and implementing the Alpha-Beta Pruning algorithm.
+
+```rust
+use std::cmp;
+
+// Define the board cell states and player turn
+#[derive(Clone, Copy, PartialEq)]
+enum CellState {
+    Empty,
+    WhitePiece,
+    BlackPiece,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum Player {
+    White,
+    Black,
+}
+
+// Define the Fanorona board
+struct FanoronaBoard {
+    cells: Vec<Vec<CellState>>,
+    player_turn: Player,
+}
+
+impl FanoronaBoard {
+    // ... Other methods (new, display, etc.) ...
+
+    // Function to generate all possible moves for the current player
+    fn generate_moves(&self) -> Vec<FanoronaBoard> {
+        // TODO: Implement move generation logic
+        // This function should return a vector of FanoronaBoard instances, each representing a possible move.
+    }
+
+    // Function to evaluate the board position
+    fn evaluate(&self) -> i32 {
+        // TODO: Implement evaluation function
+        // This function should evaluate the current board position and return a score representing the advantage for the current player.
+        // Positive score indicates an advantage for the current player, and negative score indicates an advantage for the opponent.
+    }
+
+    // Function to implement the Alpha-Beta Pruning algorithm
+    fn alpha_beta(&self, depth: i32, alpha: i32, beta: i32, maximizing_player: bool) -> i32 {
+        if depth == 0 {
+            return self.evaluate();
+        }
+
+        if maximizing_player {
+            let mut value = std::i32::MIN;
+            for child_board in self.generate_moves() {
+                value = cmp::max(value, child_board.alpha_beta(depth - 1, alpha, beta, false));
+                alpha = cmp::max(alpha, value);
+                if beta <= alpha {
+                    break;
+                }
+            }
+            return value;
+        } else {
+            let mut value = std::i32::MAX;
+            for child_board in self.generate_moves() {
+                value = cmp::min(value, child_board.alpha_beta(depth - 1, alpha, beta, true));
+                beta = cmp::min(beta, value);
+                if beta <= alpha {
+                    break;
+                }
+            }
+            return value;
+        }
+    }
+
+    // Function to find the best move using Alpha-Beta Pruning
+    fn find_best_move(&self, depth: i32) -> FanoronaBoard {
+        let mut best_score = std::i32::MIN;
+        let mut best_move = self.clone();
+        let maximizing_player = self.player_turn == Player::White;
+
+        for child_board in self.generate_moves() {
+            let score = child_board.alpha_beta(depth - 1, std::i32::MIN, std::i32::MAX, !maximizing_player);
+            if score > best_score {
+                best_score = score;
+                best_move = child_board;
+            }
+        }
+
+        best_move
+    }
+}
+```
+
+Please note that this is just a basic outline, and you will need to implement the move generation logic, evaluation function, and other game-specific details. Additionally, you might want to add error handling and further optimizations to improve the performance of the Alpha-Beta Pruning algorithm.
+
+The full implementation will require further work on the game rules, move validation, and handling game-ending conditions. However, the outline above should give you a starting point to integrate the Alpha-Beta Pruning algorithm into your Fanorona game in Rust.
