@@ -457,3 +457,52 @@ impl FanoronaBoard {
 In this implementation, the `generate_moves` function returns a `MoveIterator`, which lazily generates possible moves when you call `next()` on the iterator. By using this approach, you can avoid computing all possible moves upfront and only generate them on-demand.
 
 The actual implementation of the move generation logic will depend on the rules of the Fanorona game. You need to define how the iterator progresses through the possible moves and returns each move as requested. Consider using appropriate data structures and algorithms to efficiently generate and yield moves.
+
+> add some iterative-deepening
+
+To add Iterative Deepening to the Alpha-Beta Pruning algorithm, we modify the `find_best_move` function to perform iterative deepening instead of searching to a fixed depth. Iterative Deepening allows us to explore deeper levels of the game tree progressively until we reach a specified time limit or a maximum depth.
+
+Here's the updated `find_best_move` function with Iterative Deepening:
+
+```rust
+use std::time::{Duration, Instant};
+
+impl FanoronaBoard {
+    // ... (previously defined code for other methods, including new, set_cell, get_cell, display, generate_moves, and evaluate) ...
+
+    // Function to find the best move using Iterative Deepening with Alpha-Beta Pruning
+    fn find_best_move(&self, max_search_time: Duration, max_depth: i32) -> FanoronaBoard {
+        let maximizing_player = self.player_turn == WHITE_PIECE;
+        let mut best_score = if maximizing_player {
+            std::i32::MIN
+        } else {
+            std::i32::MAX
+        };
+        let mut best_move = self.clone();
+
+        let start_time = Instant::now();
+        let mut depth = 1;
+
+        // Perform iterative deepening until reaching the time limit or maximum depth
+        while start_time.elapsed() < max_search_time && depth <= max_depth {
+            for child_board in self.generate_moves() {
+                let score = child_board.alpha_beta(depth - 1, std::i32::MIN, std::i32::MAX, !maximizing_player);
+                if (maximizing_player && score > best_score) || (!maximizing_player && score < best_score) {
+                    best_score = score;
+                    best_move = child_board;
+                }
+            }
+
+            depth += 1;
+        }
+
+        best_move
+    }
+}
+```
+
+In this implementation, we add two parameters to the `find_best_move` function: `max_search_time` and `max_depth`. `max_search_time` is the maximum time duration that the search can take, and `max_depth` specifies the maximum depth for iterative deepening. We use `Instant::now()` from the `std::time` module to measure the elapsed time during the search.
+
+The `find_best_move` function now performs iterative deepening by repeatedly searching the game tree to increasing depths until either the time limit is reached or the maximum depth is reached. After each search iteration, the best move found so far is updated. Once the time limit or maximum depth is reached, the function returns the best move found.
+
+This approach allows us to make more informed decisions within the given time constraints, exploring deeper levels of the game tree when possible. Keep in mind that the time required for the search depends on the complexity of the game and the hardware's processing power. It's essential to strike a balance between the search depth and the available time to find a good move efficiently.
