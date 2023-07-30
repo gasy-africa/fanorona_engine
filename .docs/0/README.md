@@ -199,3 +199,95 @@ impl FanoronaBoard {
 Please note that this is just a basic outline, and you will need to implement the move generation logic, evaluation function, and other game-specific details. Additionally, you might want to add error handling and further optimizations to improve the performance of the Alpha-Beta Pruning algorithm.
 
 The full implementation will require further work on the game rules, move validation, and handling game-ending conditions. However, the outline above should give you a starting point to integrate the Alpha-Beta Pruning algorithm into your Fanorona game in Rust.
+
+> expand the generate_moves  function in a co-routine manner
+
+To implement the `generate_moves` function in a coroutine manner, we can use Rust's `async` and `await` syntax. This will allow us to generate moves lazily, only computing them when needed. We can use the `async_stream` macro from the `async-stream` crate, which enables us to return a stream of moves as they are generated.
+
+First, add the `async-stream` crate to your `Cargo.toml`:
+
+```toml
+[dependencies]
+async-stream = "0.3"
+```
+
+Now, let's expand the `generate_moves` function to return a stream of possible moves:
+
+```rust
+use async_stream::stream;
+use futures::stream::StreamExt;
+
+// ... (previously defined code for Player and CellState) ...
+
+// ... (previously defined code for FanoronaBoard, including other methods) ...
+
+impl FanoronaBoard {
+    // ... (previously defined code for other methods, including new, display, evaluate, alpha_beta, and find_best_move) ...
+
+    // Function to generate all possible moves for the current player as a stream
+    fn generate_moves(&self) -> impl futures::Stream<Item = FanoronaBoard> + '_ {
+        stream! {
+            // TODO: Implement move generation logic in a lazy manner
+            // Yield each possible move as it is generated, avoiding the need to compute all possible moves upfront.
+            // You may want to use the `yield` keyword provided by the `async-stream` crate to yield each move.
+            // For example, to yield a new move: `yield FanoronaBoard { cells: new_cells, player_turn: next_player };`
+        }
+    }
+}
+```
+
+Please note that the actual implementation of the move generation logic will depend on the rules of the Fanorona game. Since generating all possible moves can be computationally expensive, the coroutine approach helps avoid calculating all moves upfront and allows generating moves on-demand, as needed.
+
+Keep in mind that working with asynchronous programming in Rust involves using the `async` and `await` syntax, which introduces additional complexity. Be sure to handle any potential errors or exceptions that may arise during move generation.
+
+> without using the async await function
+
+If you want to implement the `generate_moves` function without using `async` and `await`, you can still achieve lazy evaluation of moves using Rust iterators. Instead of returning an asynchronous stream, you can use a custom iterator that lazily generates possible moves when requested.
+
+Here's an example of how to implement the `generate_moves` function using Rust iterators:
+
+```rust
+// ... (previously defined code for Player and CellState) ...
+
+// ... (previously defined code for FanoronaBoard, including other methods) ...
+
+impl FanoronaBoard {
+    // ... (previously defined code for other methods, including new, display, evaluate, alpha_beta, and find_best_move) ...
+
+    // Define a custom iterator for generating moves
+    struct MoveIterator<'a> {
+        board: &'a FanoronaBoard,
+        // TODO: Add any additional state needed for move generation
+        // For example, you might want to keep track of the next possible move or the state of the move generation process.
+    }
+
+    impl<'a> MoveIterator<'a> {
+        fn new(board: &'a FanoronaBoard) -> Self {
+            // TODO: Initialize the MoveIterator with the initial state for move generation.
+            MoveIterator {
+                board,
+                // Initialize any other necessary state here.
+            }
+        }
+    }
+
+    impl<'a> Iterator for MoveIterator<'a> {
+        type Item = FanoronaBoard;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            // TODO: Implement move generation logic here in a lazy manner.
+            // Return the next possible move, if any.
+            // If there are no more moves, return None to indicate the end of the iteration.
+        }
+    }
+
+    // Function to generate all possible moves for the current player using the custom MoveIterator
+    fn generate_moves(&self) -> MoveIterator {
+        MoveIterator::new(self)
+    }
+}
+```
+
+In this implementation, the `generate_moves` function returns a `MoveIterator`, which lazily generates possible moves when you call `next()` on the iterator. By using this approach, you can avoid computing all possible moves upfront and only generate them on-demand.
+
+The actual implementation of the move generation logic will depend on the rules of the Fanorona game. You need to define how the iterator progresses through the possible moves and returns each move as requested. Consider using appropriate data structures and algorithms to efficiently generate and yield moves.
